@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd" >
+
+    <context:property-placeholder location="classpath:app.properties"/>
+    <import resource="classpath:mail-context.xml" />
+
+    <!-- Habilitar uso de anotaciones -->
+    <context:annotation-config />
+
+    <!-- Habilitar Transacciones con annotations--> 
+    <tx:annotation-driven order="1" />
+    
+    <!-- Escaneo de services (beware that this does not enable mapper scanning!)  -->   
+    <context:component-scan base-package="com.recreat.service" />
+    
+    <!-- Factory bean that creates the Mongo instance -->
+    <bean id="mongo" class="org.springframework.data.mongodb.core.MongoFactoryBean">
+        <property name="host" value="${database.host}" />
+        <property name="port" value="${database.port}" />
+    </bean>
+	
+    <!-- MongoTemplate for connecting and quering the documents in the database -->
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg name="mongo" ref="mongo" />
+        <constructor-arg name="databaseName" value="${database.name}" />
+    </bean>
+
+</beans>
